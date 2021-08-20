@@ -1,22 +1,71 @@
-name: 'Composite Run Steps Action Template'
+name: Run Flyway Command
 
-description: 'Add description here'
+description: Runs the flyway command line tool against the given database
 
 inputs:
-  input-1:
-    description: 'Add a description here'
+  db-server-name:
+    description: The database server name.
     required: true
-
-outputs:
-  output-1:
-    description: 'Add description here'
-    value: '${{ steps.step_1.outputs.world }}'
+  db-server-port:
+    description: The port the database server listens on.
+    required: false
+    default: "1433"
+  db-name:
+    description: The name of the database to run flyway against.
+    required: true
+  migration-files-path:
+    description: The path to the base directory containing the migration files to process with /src/run-flyway.ps1
+    required: true
+  flyway-command:
+    description: The flyway command to run. Must be either migrate or validate.
+    required: true
+  migration-history-table:
+    description: The table where the migration history lives. This is most likely dbo.MigrationHistory or Flyway.MigrationHistory.
+    required: true
+  baseline-version:
+    description: The baseline version to send to the flyway command.
+    required: true
+    default: "0"
+  managed-schemas:
+    description: A comma separated list of schemas that are to be managed by Flyway.MigrationHistory.
+    required: true
+  enable-out-of-order:
+    description: A switch that allows new migrations that are a lower version number than a current migration to be run.
+    required: true
+    default: "false"
+  use-integrated-security:
+    description: A switch defining whether or not to use integrated security. If not provided, a password should be.
+    required: true
+    default: "true"
+  username:
+    description: The username of the user making the changes, which is put into the MigrationHistory table, and also to login with if not using integrated security.
+    required: true
+  password:
+    description: The password for the user making changes if not using integrated security.
+    required: false
+  extra-parameters:
+    description: A string containing anything extra that should be added to the flyway command.
+    required: false
 
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
-    - name: Step 1
-      id: step_1
-      shell: bash
+    - name: Update migration scripts
+      shell: pwsh
       run: |
-        echo "::set-output name=hello::world"
+        [System.Security.SecureString] $securePassword = "${{ inputs.password }}" | ConvertTo-SecureString -AsPlainText -Force
+
+        ${{ github.action_path }}/src/run-flyway.ps1 `
+        -dbServer "${{ inputs.db-server-name }}" `
+        -dbServerPort "${{ inputs.db-server-port }}" `
+        -dbName "${{ inputs.db-name }}" `
+        -pathToMigrationFiles "${{ inputs.migration-files-path }}" `
+        -flywayCommand "${{ inputs.flyway-command }}" `
+        -migrationHistoryTable "${{ inputs.migration-history-table }}" `
+        -baselineVersion "${{ inputs.baseline-version }}" `
+        -managedSchemas "${{ inputs.managed-schemas }}" `
+        -enableOutOfOrder "${{ inputs.enable-out-of-order }}" `
+        -useIntegratedSecurity "${{ inputs.use-integrated-security }}" `
+        -username "${{ inputs.username }}" `
+        -password $securePassword `
+        -extraParameters "${{ inputs.extra-parameters }}"

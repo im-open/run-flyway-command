@@ -1,72 +1,55 @@
-# composite-run-steps-action-template
+# run-flyway-command
 
-This template can be used to quickly start a new custom composite-run-steps action repository.  Click the `Use this template` button at the top to get started.
-
-## TODOs
-- Readme
-  - [ ] Update the Inputs section with the correct action inputs
-  - [ ] Update the Outputs section with the correct action outputs
-  - [ ] Update the Example section with the correct usage   
-- action.yml
-  - [ ] Fill in the correct name, description, inputs and outputs and implement steps
-- CODEOWNERS
-  - [ ] Update as appropriate
-- Repository Settings
-  - [ ] On the *Options* tab check the box to *Automatically delete head branches*
-  - [ ] On the *Options* tab update the repository's visibility
-  - [ ] On the *Branches* tab add a branch protection rule
-    - [ ] Check *Require pull request reviews before merging*
-    - [ ] Check *Dismiss stale pull request approvals when new commits are pushed*
-    - [ ] Check *Require review from Code Owners*
-    - [ ] Check *Include Administrators*
-  - [ ] On the *Manage Access* tab add the appropriate groups
-- About Section (accessed on the main page of the repo, click the gear icon to edit)
-  - [ ] The repo should have a short description of what it is for
-  - [ ] Add one of the following topic tags:
-    | Topic Tag       | Usage                                    |
-    | --------------- | ---------------------------------------- |
-    | az              | For actions related to Azure             |
-    | code            | For actions related to building code     |
-    | certs           | For actions related to certificates      |
-    | db              | For actions related to databases         |
-    | git             | For actions related to Git               |
-    | iis             | For actions related to IIS               |
-    | microsoft-teams | For actions related to Microsoft Teams   |
-    | svc             | For actions related to Windows Services  |
-    | jira            | For actions related to Jira              |
-    | meta            | For actions related to running workflows |
-    | pagerduty       | For actions related to PagerDuty         |
-    | test            | For actions related to testing           |
-    | tf              | For actions related to Terraform         |
-  - [ ] Add any additional topics for an action if they apply    
+A GitHub Action that will run (Flyway)[https://flywaydb.org/] against a specified database. Flyway must be installed in order for this Action to work. The [setup-flyway](https://github.com/im-open/setup-flyway) Action can be used for that purpose.  
     
 
 ## Inputs
-| Parameter | Is Required | Description           |
-| --------- | ----------- | --------------------- |
-| `input-1` | true        | Description goes here |
-| `input-2` | false       | Description goes here |
-
-## Outputs
-| Output     | Description           |
-| ---------- | --------------------- |
-| `output-1` | Description goes here |
+| Parameter                 | Is Required | Default | Description                                                                                                                                         |
+| ------------------------- | ----------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `db-server-name`          | true        | N/A     | The database server name.                                                                                                                           |
+| `db-server-port`          | false       | 1433    | The port the database server listens on.                                                                                                            |
+| `db-name`                 | true        | N/A     | The name of the database to run flyway against.                                                                                                     |
+| `migration-files-path`    | true        | N/A     | The path to the base directory containing the migration files to have flyway process.                                                               |
+| `flyway-command`          | true        | N/A     | The flyway command to run. Only migrate and validate are supported at this time.                                                                    |
+| `migration-history-table` | true        | N/A     | The table where the migration history lives. This is most likely dbo.MigrationHistory or Flyway.MigrationHistory.                                   |
+| `baseline-version`        | true        | 0       | The baseline version to send to the flyway command.                                                                                                 |
+| `managed-schemas`         | true        | N/A     | A comma separated list of schemas that are to be managed by Flyway.MigrationHistory.                                                                |
+| `enable-out-of-order`     | true        | false   | A switch that allows new migrations that are a lower version number than a current migration to be run.                                             |
+| `use-integrated-security` | true        | true    | A switch defining whether or not to use integrated security. If not provided, a password should be.                                                 |
+| `username`                | true        | N/A     | The username of the user making the changes, which is put into the MigrationHistory table, and also to login with if not using integrated security. |
+| `password`                | false       | N/A     | The password for the user making changes if not using integrated security.                                                                          |
+| `extra-parameters`        | false       | N/A     | A string containing anything extra that should be added to the flyway command.                                                                      |
 
 ## Example
 
 ```yml
-# TODO: Fill in the correct usage
 jobs:
-  job1:
-    runs-on: [self-hosted]
+  migrate-database:
+    runs-on: [self-hosted, windows-2019]
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
 
-      - name: Add the action here
-        uses: im-open/this-repo@v1.0.0
+      - name: Setup Flyway
+        uses: actions/setup-flyway@v1
         with:
-          input-1: 'abc'
-          input-2: '123
+          version: 5.1.4
+
+      - name: Run Flyway Migrations
+        uses: im-open/run-flyway-command@v1.0.0
+        with:
+          db-server-name: 'localhost'
+          db-server-port: '1433'
+          db-name: 'LocalDb'
+          migration-files-path: './src/Database/Migrations'
+          flyway-command: 'migrate'
+          migration-history-table: 'dbo.MigrationHistory'
+          baseline-version: '0'
+          managed-schemas: 'dbo,MyCustomSchema'
+          enable-out-of-order: 'true'
+          use-integrated-security: 'false'
+          username: 'database-user'
+          password: '${{ secrets.DbUserPassword }}'
 ```
 
 
