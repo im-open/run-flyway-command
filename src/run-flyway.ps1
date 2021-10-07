@@ -12,18 +12,17 @@ param (
     [switch]$enableOutOfOrder = $false,
     [switch]$useIntegratedSecurity = $false,
     [string]$username,
-    [System.Security.SecureString]$password
+    [string]$password
 )
 $ErrorActionPreference = "Stop";
 . $PSScriptRoot\exception-details.ps1
 
 Write-Information -InformationAction Continue -MessageData "Running $flywayCommand..."   
 
-$flywayLocations =  "filesystem:'$(Resolve-Path $pathToMigrationFiles)'"
+$flywayLocations =  "filesystem:`"$(Resolve-Path $pathToMigrationFiles)`""
 
 try
 {
-    # $managedSchemas = (Get-DMConfig -projectRoot $projectRoot).Flyway.managedSchema
     $jdbcUrl = "jdbc:sqlserver://${dbServer}:$dbServerPort;databaseName=$dbName;"
 
     if ($useIntegratedSecurity)
@@ -33,12 +32,10 @@ try
 
     $outOfOrderValue = $enableOutOfOrder.ToString().ToLower()
     $flywayParamArray = @(
-        '-n'
         "-url=`"$jdbcUrl`""
-        "-placeholders.DatabaseName=$dbName"
         "-locations=$flywayLocations"
-        "-installedBy=$username"
-        "-table=$migrationHistoryTable"
+        "-installedBy=`"$username`""
+        "-table=`"$migrationHistoryTable`""
         "-baselineOnMigrate=true"
         "-baselineVersion=$baselineVersion"
         "-schemas=`"$managedSchemas`""
@@ -47,15 +44,16 @@ try
 
     if($null -ne $password)
     {
-        $flywayParamArray += "-user=$userName"
-        $flywayParamArray += "-password=$password"
+        $flywayParamArray += "-user=`"$userName`""
+        $flywayParamArray += "-password=`"$password`""
     }
 
     $flywayParams = [string]::Join(" ", $flywayParamArray)
     $flywayParams = $flywayParams + " $extraParameters"
 
-    # 2>&1 is to surface errors that would otherwise be ignored.
-    cmd /c "flyway.cmd $flywayParams $flywayCommand" 2>&1
+    Write-Output "Running the flyway command:"
+    Write-Output "flyway $flywayParams $flywayCommand"
+    Invoke-Expression -Command "& flyway $flywayParams $flywayCommand" -ErrorAction Stop
 }
 catch
 {

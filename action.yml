@@ -53,8 +53,6 @@ runs:
     - name: Update migration scripts
       shell: pwsh
       run: |
-        [System.Security.SecureString] $securePassword = "${{ inputs.password }}" | ConvertTo-SecureString -AsPlainText -Force
-
         ${{ github.action_path }}/src/run-flyway.ps1 `
         -dbServer "${{ inputs.db-server-name }}" `
         -dbServerPort "${{ inputs.db-server-port }}" `
@@ -65,7 +63,7 @@ runs:
         -baselineVersion "${{ inputs.baseline-version }}" `
         -managedSchemas "${{ inputs.managed-schemas }}" `
         -enableOutOfOrder "${{ inputs.enable-out-of-order }}" `
-        -useIntegratedSecurity "${{ inputs.use-integrated-security }}" `
+        -useIntegratedSecurity:$${{ inputs.use-integrated-security }} `
         -username "${{ inputs.username }}" `
-        -password $securePassword `
+        -password "${{ inputs.password }}" `
         -extraParameters "${{ inputs.extra-parameters }}"
