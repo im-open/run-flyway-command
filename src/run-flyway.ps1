@@ -12,7 +12,7 @@ param (
     [switch]$enableOutOfOrder = $false,
     [switch]$useIntegratedSecurity = $false,
     [string]$username,
-    [string]$password
+    [SecureString]$password
 )
 $ErrorActionPreference = "Stop";
 . $PSScriptRoot\exception-details.ps1
@@ -41,18 +41,25 @@ try
         "-schemas=`"$managedSchemas`""
         "-outOfOrder=$outOfOrderValue"
     )
+    $safeFlywayParamArray = $flywayParamArray.psobject.copy()
 
     if($null -ne $password)
     {
+        $cred = New-Object System.Management.Automation.PSCredential -ArgumentList $username, $password
+        $plainPassword = $cred.GetNetworkCredential().Password
+
         $flywayParamArray += "-user=`"$userName`""
-        $flywayParamArray += "-password=`"$password`""
+        $flywayParamArray += "-password=`"$plainPassword`""
+        $safeFlywayParamArray += "-user=`"$userName`""
+        $safeFlywayParamArray += "-password=`"$password`""
     }
 
     $flywayParams = [string]::Join(" ", $flywayParamArray)
     $flywayParams = $flywayParams + " $extraParameters"
+    $safeFlywayParams = [string]::Join(" ", $safeFlywayParamArray) + " $extraParameters"
 
     Write-Output "Running the flyway command:"
-    Write-Output "flyway $flywayParams $flywayCommand"
+    Write-Output "flyway $safeFlywayParams $flywayCommand"
     Invoke-Expression -Command "& flyway $flywayParams $flywayCommand" -ErrorAction Stop
 }
 catch
