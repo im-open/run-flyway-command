@@ -41,7 +41,7 @@ try
         "-schemas=`"$managedSchemas`""
         "-outOfOrder=$outOfOrderValue"
     )
-    $safeFlywayParamArray = $flywayParamArray.psobject.copy()
+    $printableFlywayParamArray = $flywayParamArray.psobject.copy()
 
     if($null -ne $password)
     {
@@ -50,16 +50,16 @@ try
 
         $flywayParamArray += "-user=`"$userName`""
         $flywayParamArray += "-password=`"$plainPassword`""
-        $safeFlywayParamArray += "-user=`"$userName`""
-        $safeFlywayParamArray += "-password=`"$password`""
+        $printableFlywayParamArray += "-user=`"$userName`""
+        $printableFlywayParamArray += "-password=`"$password`""
     }
 
     $flywayParams = [string]::Join(" ", $flywayParamArray)
     $flywayParams = $flywayParams + " $extraParameters"
-    $safeFlywayParams = [string]::Join(" ", $safeFlywayParamArray) + " $extraParameters"
+    $printableFlywayParams = [string]::Join(" ", $printableFlywayParamArray) + " $extraParameters"
 
     Write-Output "Running the flyway command:"
-    Write-Output "flyway $safeFlywayParams $flywayCommand"
+    Write-Output "flyway $printableFlywayParams $flywayCommand"
     Invoke-Expression -Command "& flyway $flywayParams $flywayCommand" -ErrorAction Stop
 }
 catch
