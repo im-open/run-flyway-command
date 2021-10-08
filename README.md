@@ -36,7 +36,7 @@ jobs:
           version: 5.1.4
 
       - name: Run Flyway Migrations
-        uses: im-open/run-flyway-command@v1.0.0
+        uses: im-open/run-flyway-command@v1.1.0
         with:
           db-server-name: 'localhost'
           db-server-port: '1433'

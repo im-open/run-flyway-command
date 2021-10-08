@@ -65,7 +65,7 @@ runs:
         -baselineVersion "${{ inputs.baseline-version }}" `
         -managedSchemas "${{ inputs.managed-schemas }}" `
         -enableOutOfOrder "${{ inputs.enable-out-of-order }}" `
-        -useIntegratedSecurity "${{ inputs.use-integrated-security }}" `
+        -useIntegratedSecurity:$${{ inputs.use-integrated-security }} `
         -username "${{ inputs.username }}" `
         -password $securePassword `
         -extraParameters "${{ inputs.extra-parameters }}"
