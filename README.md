@@ -10,7 +10,7 @@ A GitHub Action that will run (Flyway)[https://flywaydb.org/] against a specifie
 | `db-server-port`          | false       | 1433    | The port the database server listens on.                                                                                                            |
 | `db-name`                 | true        | N/A     | The name of the database to run flyway against.                                                                                                     |
 | `migration-files-path`    | true        | N/A     | The path to the base directory containing the migration files to have flyway process.                                                               |
-| `flyway-command`          | true        | N/A     | The flyway command to run. Only migrate and validate are supported at this time.                                                                    |
+| `flyway-command`          | true        | N/A     | The flyway command to run; e.g `migrate`, `validate`, etc.                                                                                          |
 | `migration-history-table` | true        | N/A     | The table where the migration history lives. This is most likely dbo.MigrationHistory or Flyway.MigrationHistory.                                   |
 | `baseline-version`        | true        | 0       | The baseline version to send to the flyway command.                                                                                                 |
 | `managed-schemas`         | true        | N/A     | A comma separated list of schemas that are to be managed by Flyway.MigrationHistory.                                                                |

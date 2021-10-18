@@ -3,7 +3,6 @@ param (
     [string]$dbServerPort,
     [string]$dbName,
     [string]$pathToMigrationFiles,
-    [ValidateSet("migrate", "validate")]
     [string]$flywayCommand,
     [string]$extraParameters,
     [string]$migrationHistoryTable,

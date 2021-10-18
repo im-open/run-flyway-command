@@ -17,7 +17,7 @@ inputs:
     description: The path to the base directory containing the migration files to process with /src/run-flyway.ps1
     required: true
   flyway-command:
-    description: The flyway command to run. Must be either migrate or validate.
+    description: The flyway command to run; e.g migrate, validate, etc.
     required: true
   migration-history-table:
     description: The table where the migration history lives. This is most likely dbo.MigrationHistory or Flyway.MigrationHistory.
