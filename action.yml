@@ -9,7 +9,7 @@ inputs:
   db-server-port:
     description: The port the database server listens on.
     required: false
-    default: "1433"
+    default: '1433'
   db-name:
     description: The name of the database to run flyway against.
     required: true
@@ -25,18 +25,18 @@ inputs:
   baseline-version:
     description: The baseline version to send to the flyway command.
     required: true
-    default: "0"
+    default: '0'
   managed-schemas:
     description: A comma separated list of schemas that are to be managed by Flyway.MigrationHistory.
     required: true
   enable-out-of-order:
     description: A switch that allows new migrations that are a lower version number than a current migration to be run.
     required: true
-    default: "false"
+    default: 'false'
   use-integrated-security:
     description: A switch defining whether or not to use integrated security. If not provided, a password should be.
     required: true
-    default: "true"
+    default: 'true'
   username:
     description: The username of the user making the changes, which is put into the MigrationHistory table, and also to login with if not using integrated security.
     required: true
@@ -48,12 +48,12 @@ inputs:
     required: false
 
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - name: Update migration scripts
       shell: pwsh
       run: |
-        [System.Security.SecureString] $securePassword = "${{ inputs.password }}" | ConvertTo-SecureString -AsPlainText -Force
+        [System.Security.SecureString] $securePassword = if(!!"${{ inputs.password }}") { ConvertTo-SecureString "${{ inputs.password }}" -AsPlainText -Force } else { $null }
 
         ${{ github.action_path }}/src/run-flyway.ps1 `
         -dbServer "${{ inputs.db-server-name }}" `
