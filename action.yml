@@ -64,7 +64,7 @@ runs:
         -migrationHistoryTable "${{ inputs.migration-history-table }}" `
         -baselineVersion "${{ inputs.baseline-version }}" `
         -managedSchemas "${{ inputs.managed-schemas }}" `
-        -enableOutOfOrder "${{ inputs.enable-out-of-order }}" `
+        -enableOutOfOrder:$${{ inputs.enable-out-of-order }} `
         -useIntegratedSecurity:$${{ inputs.use-integrated-security }} `
         -username "${{ inputs.username }}" `
         -password $securePassword `
