@@ -18,14 +18,12 @@ $ErrorActionPreference = "Stop";
 
 Write-Information -InformationAction Continue -MessageData "Running $flywayCommand..."   
 
-$flywayLocations =  "filesystem:`"$(Resolve-Path $pathToMigrationFiles)`""
+$flywayLocations = "filesystem:`"$(Resolve-Path $pathToMigrationFiles)`""
 
-try
-{
+try {
     $jdbcUrl = "jdbc:sqlserver://${dbServer}:$dbServerPort;databaseName=$dbName;"
 
-    if ($useIntegratedSecurity)
-    {
+    if ($useIntegratedSecurity) {
         $jdbcUrl += "integratedSecurity=true;"
     }
 
@@ -36,14 +34,13 @@ try
         "-installedBy=`"$username`""
         "-table=`"$migrationHistoryTable`""
         "-baselineOnMigrate=true"
-        "-baselineVersion=$baselineVersion"
+        "-baselineVersion=`"$baselineVersion`""
         "-schemas=`"$managedSchemas`""
         "-outOfOrder=$outOfOrderValue"
     )
     $printableFlywayParamArray = $flywayParamArray.psobject.copy()
 
-    if($null -ne $password)
-    {
+    if ($null -ne $password) {
         $cred = New-Object System.Management.Automation.PSCredential -ArgumentList $username, $password
         $plainPassword = $cred.GetNetworkCredential().Password
 
@@ -61,8 +58,7 @@ try
     Write-Output "flyway $printableFlywayParams $flywayCommand"
     Invoke-Expression -Command "& flyway $flywayParams $flywayCommand" -ErrorAction Stop
 }
-catch
-{
+catch {
     Write-Host $_.Exception
     Write-ExceptionDetails $_.Exception
     throw
