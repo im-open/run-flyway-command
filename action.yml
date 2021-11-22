@@ -33,6 +33,10 @@ inputs:
     description: A switch that allows new migrations that are a lower version number than a current migration to be run.
     required: true
     default: 'false'
+  validate-migrations:
+    description: A switch determining whether flyway should validate the migration scripts before running them.
+    required: true
+    default: 'true'
   use-integrated-security:
     description: A switch defining whether or not to use integrated security. If not provided, a password should be.
     required: true
@@ -65,6 +69,7 @@ runs:
         -baselineVersion "${{ inputs.baseline-version }}" `
         -managedSchemas "${{ inputs.managed-schemas }}" `
         -enableOutOfOrder:$${{ inputs.enable-out-of-order }} `
+        -validateMigrations:$${{ inputs.validate-migrations }} `
         -useIntegratedSecurity:$${{ inputs.use-integrated-security }} `
         -username "${{ inputs.username }}" `
         -password $securePassword `

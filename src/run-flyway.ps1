@@ -10,6 +10,7 @@ param (
     [string]$managedSchemas,
     [switch]$enableOutOfOrder = $false,
     [switch]$useIntegratedSecurity = $false,
+    [switch]$validateMigrations = $false,
     [string]$username,
     [SecureString]$password
 )
@@ -38,6 +39,12 @@ try {
         "-schemas=`"$managedSchemas`""
         "-outOfOrder=$outOfOrderValue"
     )
+
+    if ($validateMigrations) {
+        $validateMigrationsValue = $validateMigrations.ToString().ToLower()
+        $flywayParamArray += "-validateOnMigrate=$validateMigrationsValue"
+    }
+
     $printableFlywayParamArray = $flywayParamArray.psobject.copy()
 
     if ($null -ne $password) {
