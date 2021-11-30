@@ -29,6 +29,7 @@ try {
     }
 
     $outOfOrderValue = $enableOutOfOrder.ToString().ToLower()
+    $validateMigrationsValue = $validateMigrations.ToString().ToLower()
     $flywayParamArray = @(
         "-url=`"$jdbcUrl`""
         "-locations=$flywayLocations"
@@ -38,12 +39,8 @@ try {
         "-baselineVersion=`"$baselineVersion`""
         "-schemas=`"$managedSchemas`""
         "-outOfOrder=$outOfOrderValue"
+        "-validateOnMigrate=$validateMigrationsValue"
     )
-
-    if ($validateMigrations) {
-        $validateMigrationsValue = $validateMigrations.ToString().ToLower()
-        $flywayParamArray += "-validateOnMigrate=$validateMigrationsValue"
-    }
 
     $printableFlywayParamArray = $flywayParamArray.psobject.copy()
 
