@@ -1,6 +1,6 @@
 # run-flyway-command
 
-A GitHub Action that will run (Flyway)[https://flywaydb.org/] against a specified database. Flyway must be installed in order for this Action to work. The [setup-flyway](https://github.com/im-open/setup-flyway) Action can be used for that purpose.  
+A GitHub Action that will run [Flyway](https://flywaydb.org/) against a specified database. Flyway must be installed in order for this Action to work. The [setup-flyway](https://github.com/im-open/setup-flyway) Action can be used for that purpose.  
 
 ## Index
     
@@ -44,7 +44,7 @@ jobs:
           version: 5.1.4
 
       - name: Run Flyway Migrations
-        uses: im-open/run-flyway-command@v1.2.1
+        uses: im-open/run-flyway-command@v1.3.0
         with:
           db-server-name: 'localhost'
           db-server-port: '1433'
