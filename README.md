@@ -26,7 +26,7 @@ A GitHub Action that will run [Flyway](https://flywaydb.org/) against a specifie
 | `managed-schemas`         | true        | N/A     | A comma separated list of schemas that are to be managed by Flyway.MigrationHistory.                                                                |
 | `enable-out-of-order`     | true        | false   | A switch that allows new migrations that are a lower version number than a current migration to be run.                                             |
 | `validate-migrations`     | true        | true    | A switch determining whether flyway should validate the migration scripts before running them.                                                      |
-| `use-integrated-security` | true        | true    | A switch defining whether or not to use integrated security. If not provided, a password should be.                                                 |
+| `use-integrated-security` | true        | false   | A switch defining whether or not to use integrated security. If not provided, a password should be.                                                 |
 | `username`                | true        | N/A     | The username of the user making the changes, which is put into the MigrationHistory table, and also to login with if not using integrated security. |
 | `password`                | false       | N/A     | The password for the user making changes if not using integrated security.                                                                          |
 | `extra-parameters`        | false       | N/A     | A string containing anything extra that should be added to the flyway command.                                                                      |

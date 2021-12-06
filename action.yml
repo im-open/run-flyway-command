@@ -40,7 +40,7 @@ inputs:
   use-integrated-security:
     description: A switch defining whether or not to use integrated security. If not provided, a password should be.
     required: true
-    default: 'true'
+    default: 'false'
   username:
     description: The username of the user making the changes, which is put into the MigrationHistory table, and also to login with if not using integrated security.
     required: true
