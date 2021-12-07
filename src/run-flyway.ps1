@@ -10,6 +10,7 @@ param (
     [string]$managedSchemas,
     [switch]$enableOutOfOrder = $false,
     [switch]$useIntegratedSecurity = $false,
+    [switch]$validateMigrations = $false,
     [string]$username,
     [SecureString]$password
 )
@@ -18,32 +19,32 @@ $ErrorActionPreference = "Stop";
 
 Write-Information -InformationAction Continue -MessageData "Running $flywayCommand..."   
 
-$flywayLocations =  "filesystem:`"$(Resolve-Path $pathToMigrationFiles)`""
+$flywayLocations = "filesystem:`"$(Resolve-Path $pathToMigrationFiles)`""
 
-try
-{
+try {
     $jdbcUrl = "jdbc:sqlserver://${dbServer}:$dbServerPort;databaseName=$dbName;"
 
-    if ($useIntegratedSecurity)
-    {
+    if ($useIntegratedSecurity) {
         $jdbcUrl += "integratedSecurity=true;"
     }
 
     $outOfOrderValue = $enableOutOfOrder.ToString().ToLower()
+    $validateMigrationsValue = $validateMigrations.ToString().ToLower()
     $flywayParamArray = @(
         "-url=`"$jdbcUrl`""
         "-locations=$flywayLocations"
         "-installedBy=`"$username`""
         "-table=`"$migrationHistoryTable`""
         "-baselineOnMigrate=true"
-        "-baselineVersion=$baselineVersion"
+        "-baselineVersion=`"$baselineVersion`""
         "-schemas=`"$managedSchemas`""
         "-outOfOrder=$outOfOrderValue"
+        "-validateOnMigrate=$validateMigrationsValue"
     )
+
     $printableFlywayParamArray = $flywayParamArray.psobject.copy()
 
-    if($null -ne $password)
-    {
+    if ($null -ne $password) {
         $cred = New-Object System.Management.Automation.PSCredential -ArgumentList $username, $password
         $plainPassword = $cred.GetNetworkCredential().Password
 
@@ -61,8 +62,7 @@ try
     Write-Output "flyway $printableFlywayParams $flywayCommand"
     Invoke-Expression -Command "& flyway $flywayParams $flywayCommand" -ErrorAction Stop
 }
-catch
-{
+catch {
     Write-Host $_.Exception
     Write-ExceptionDetails $_.Exception
     throw
