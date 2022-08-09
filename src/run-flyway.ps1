@@ -10,7 +10,10 @@ param (
     [string]$managedSchemas,
     [switch]$enableOutOfOrder = $false,
     [switch]$useIntegratedSecurity = $false,
+    [switch]$useActiveDirectoryMSI = $false,
+    [switch]$useActiveDirectoryServicePrincipal = $false,
     [switch]$validateMigrations = $false,
+    [string]$msiClientId,
     [string]$username,
     [SecureString]$password
 )
@@ -26,6 +29,15 @@ try {
 
     if ($useIntegratedSecurity) {
         $jdbcUrl += "integratedSecurity=true;"
+    }
+    if ($useActiveDirectoryMSI) {
+        $jdbcUrl += "authentication=ActiveDirectoryMSI;"
+        if ($msiClientId) {
+            $jdbcUrl += "msiClientId=$msiClientId;"
+        }
+    }
+    if ($useActiveDirectoryServicePrincipal) {
+        $jdbcUrl += "authentication=ActiveDirectoryServicePrincipal;"
     }
 
     $outOfOrderValue = $enableOutOfOrder.ToString().ToLower()
