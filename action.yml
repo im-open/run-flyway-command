@@ -42,19 +42,19 @@ inputs:
     required: false
     default: 'false'
   use-azure-managed-identity:
-    description: A switch that can be used to indicate that an Azure Managed Identity should be used to authenticate with the SQL Server.
+    description: A switch to indicate that an Azure Managed Identity should be used to authenticate with the SQL Server. azure-msi-client-id must be specified if you are using a User-Assigned Managed Identity. If you are using a System-Assigned Managed Identity then azure-msi-client-id should not be specified.
     required: false
     default: 'false'
   use-azure-service-principal:
-    description: A switch that can be used to indicate that an Azure Active Directory Service Principal will be used to authentication with the SQL Server.
+    description: A switch to indicate that an Azure Active Directory Service Principal will be used to authentication with the SQL Server.
     required: false
     default: 'false'
   azure-msi-client-id:
-    description: The Azure Client Id of the Managed Identity used to login to the database. Must be specified if the Managed Identity is a User-Assigned Managed Identity and the use-azure-managed-identity flag is set.
+    description: The Azure Client Id of the Managed Identity used to login to the database. Must be specified if the Managed Identity is a User-Assigned Managed Identity and the use-azure-managed-identity flag is set. If the Managed Identity is System-Assigned, then this property should not be set.
     required: false
   username:
     description: The username of the user making the changes, which is put into the MigrationHistory table, and also to login with if not using integrated security. This should be the Service Principal ID if use-azure-service-principal is set to true.
-    required: true
+    required: false
   password:
     description: The password for the user making changes if not using integrated security. This should be the Service Principal Secret if use-azure-service-principal is set to true.
     required: false
