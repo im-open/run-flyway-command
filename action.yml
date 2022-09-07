@@ -41,22 +41,22 @@ inputs:
     description: A switch defining whether or not to use integrated security. If not provided, a password should be.
     required: false
     default: 'false'
-  use-managed-identity:
-    description: A switch that can be used to indicate that a Managed Identity should be used to authenticate with the SQL Server.
+  use-azure-managed-identity:
+    description: A switch that can be used to indicate that an Azure Managed Identity should be used to authenticate with the SQL Server.
     required: false
     default: 'false'
-  use-service-principal:
-    description: A switch that can be used to indicate that an Active Directory Service Principal will be used to authentication with the SQL Server.
+  use-azure-service-principal:
+    description: A switch that can be used to indicate that an Azure Active Directory Service Principal will be used to authentication with the SQL Server.
     required: false
     default: 'false'
-  msi-client-id:
-    description: The Azure Client Id of the Managed Identity used to login to the database. Must be specified if the Managed Identity is a User-Assigned Managed Identity and the use-managed-identity flag is set.
+  azure-msi-client-id:
+    description: The Azure Client Id of the Managed Identity used to login to the database. Must be specified if the Managed Identity is a User-Assigned Managed Identity and the use-azure-managed-identity flag is set.
     required: false
   username:
-    description: The username of the user making the changes, which is put into the MigrationHistory table, and also to login with if not using integrated security.
+    description: The username of the user making the changes, which is put into the MigrationHistory table, and also to login with if not using integrated security. This should be the Service Principal ID if use-azure-service-principal is set to true.
     required: true
   password:
-    description: The password for the user making changes if not using integrated security.
+    description: The password for the user making changes if not using integrated security. This should be the Service Principal Secret if use-azure-service-principal is set to true.
     required: false
   extra-parameters:
     description: A string containing anything extra that should be added to the flyway command.
@@ -82,9 +82,9 @@ runs:
         -enableOutOfOrder:$${{ inputs.enable-out-of-order }} `
         -validateMigrations:$${{ inputs.validate-migrations }} `
         -useIntegratedSecurity:$${{ inputs.use-integrated-security }} `
-        -useActiveDirectoryMSI:$${{ inputs.use-managed-identity }} `
-        -useActiveDirectoryServicePrincipal:$${{ inputs.use-service-principal }} `
-        -msiClientId "${{ inputs.msi-client-id }}" `
+        -useActiveDirectoryMSI:$${{ inputs.use-azure-managed-identity }} `
+        -useActiveDirectoryServicePrincipal:$${{ inputs.use-azure-service-principal }} `
+        -msiClientId "${{ inputs.azure-msi-client-id }}" `
         -username "${{ inputs.username }}" `
         -password $securePassword `
         -extraParameters "${{ inputs.extra-parameters }}"

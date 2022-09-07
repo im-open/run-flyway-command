@@ -7,32 +7,37 @@ A GitHub Action that will run [Flyway](https://flywaydb.org/) against a specifie
 - [run-flyway-command](#run-flyway-command)
   - [Index](#index)
   - [Inputs](#inputs)
-  - [Example](#example)
+  - [Examples](#examples)
   - [Contributing](#contributing)
     - [Incrementing the Version](#incrementing-the-version)
   - [Code of Conduct](#code-of-conduct)
   - [License](#license)
   
 ## Inputs
-| Parameter                 | Is Required | Default | Description                                                                                                                                         |
-| ------------------------- | ----------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `db-server-name`          | true        | N/A     | The database server name.                                                                                                                           |
-| `db-server-port`          | false       | 1433    | The port the database server listens on.                                                                                                            |
-| `db-name`                 | true        | N/A     | The name of the database to run flyway against.                                                                                                     |
-| `migration-files-path`    | true        | N/A     | The path to the base directory containing the migration files to have flyway process.                                                               |
-| `flyway-command`          | true        | N/A     | The flyway command to run; e.g `migrate`, `validate`, etc.                                                                                          |
-| `migration-history-table` | true        | N/A     | The table where the migration history lives. This is most likely dbo.MigrationHistory or Flyway.MigrationHistory.                                   |
-| `baseline-version`        | true        | 0       | The baseline version to send to the flyway command.                                                                                                 |
-| `managed-schemas`         | true        | N/A     | A comma separated list of schemas that are to be managed by Flyway.MigrationHistory.                                                                |
-| `enable-out-of-order`     | true        | false   | A switch that allows new migrations that are a lower version number than a current migration to be run.                                             |
-| `validate-migrations`     | true        | true    | A switch determining whether flyway should validate the migration scripts before running them.                                                      |
-| `use-integrated-security` | true        | false   | A switch defining whether or not to use integrated security. If not provided, a password should be.                                                 |
-| `username`                | true        | N/A     | The username of the user making the changes, which is put into the MigrationHistory table, and also to login with if not using integrated security. |
-| `password`                | false       | N/A     | The password for the user making changes if not using integrated security.                                                                          |
-| `extra-parameters`        | false       | N/A     | A string containing anything extra that should be added to the flyway command.                                                                      |
+| Parameter                     | Is Required | Default | Description                                                                                                                                                                                                                                |
+| ----------------------------- | ----------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `db-server-name`              | true        | N/A     | The database server name.                                                                                                                                                                                                                  |
+| `db-server-port`              | false       | 1433    | The port the database server listens on.                                                                                                                                                                                                   |
+| `db-name`                     | true        | N/A     | The name of the database to run flyway against.                                                                                                                                                                                            |
+| `migration-files-path`        | true        | N/A     | The path to the base directory containing the migration files to have flyway process.                                                                                                                                                      |
+| `flyway-command`              | true        | N/A     | The flyway command to run; e.g `migrate`, `validate`, etc.                                                                                                                                                                                 |
+| `migration-history-table`     | true        | N/A     | The table where the migration history lives. This is most likely dbo.MigrationHistory or Flyway.MigrationHistory.                                                                                                                          |
+| `baseline-version`            | false       | 0       | The baseline version to send to the flyway command.                                                                                                                                                                                        |
+| `managed-schemas`             | true        | N/A     | A comma separated list of schemas that are to be managed by Flyway.MigrationHistory.                                                                                                                                                       |
+| `enable-out-of-order`         | false       | false   | A switch that allows new migrations that are a lower version number than a current migration to be run.                                                                                                                                    |
+| `validate-migrations`         | false       | true    | A switch determining whether flyway should validate the migration scripts before running them.                                                                                                                                             |
+| `use-integrated-security`     | false       | false   | A switch defining whether or not to use integrated security. If not provided, a password should be.                                                                                                                                        |
+| `use-azure-managed-identity`  | false       | false   | A switch that can be used to indicate that an Azure Managed Identity should be used to authenticate with the SQL Server.                                                                                                                   |
+| `use-azure-service-principal` | false       | false   | A switch that can be used to indicate that an Azure Active Directory Service Principal will be used to authentication with the SQL Server.                                                                                                 |
+| `azure-msi-client-id`         | false       | N/A     | The Azure Client Id of the Managed Identity used to login to the database. Must be specified if the Managed Identity is a User-Assigned Managed Identity and the use-azure-managed-identity flag is set.                                   |
+| `username`                    | true        | N/A     | The username of the user making the changes, which is put into the MigrationHistory table, and also to login with if not using integrated security. This should be the Service Principal ID if use-azure-service-principal is set to true. |
+| `password`                    | false       | N/A     | The password for the user making changes if not using integrated security. This should be the Service Principal Secret if use-azure-service-principal is set to true.                                                                      |
+| `extra-parameters`            | false       | N/A     | A string containing anything extra that should be added to the flyway command.                                                                                                                                                             |
 
-## Example
+## Examples
 
+
+**Using user/password authentication**
 ```yml
 jobs:
   migrate-database:
@@ -47,7 +52,7 @@ jobs:
           version: 5.1.4
 
       - name: Run Flyway Migrations
-        uses: im-open/run-flyway-command@v1.3.0
+        uses: im-open/run-flyway-command@v1.4.0
         with:
           db-server-name: 'localhost'
           db-server-port: '1433'
@@ -63,6 +68,95 @@ jobs:
           password: '${{ secrets.DbUserPassword }}'
 ```
 
+**Using Azure Service Principal authentication**
+```yml
+jobs:
+  migrate-database:
+    runs-on: [self-hosted, windows-2019]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Flyway
+        uses: actions/setup-flyway@v1
+        with:
+          version: 5.1.4
+
+      - name: Run Flyway Migrations
+        uses: im-open/run-flyway-command@v1.4.0
+        with:
+          db-server-name: 'localhost'
+          db-server-port: '1433'
+          db-name: 'LocalDb'
+          migration-files-path: './src/Database/Migrations'
+          flyway-command: 'migrate'
+          migration-history-table: 'dbo.MigrationHistory'
+          baseline-version: '0'
+          managed-schemas: 'dbo,MyCustomSchema'
+          enable-out-of-order: 'true'
+          use-azure-service-principal: 'true'
+          username: '${{ secrets.AZ_SERVICE_PRINCIPAL_ID }}'
+          password: '${{ secrets.AZ_SERVICE_PRINCIPAL_SECRET }}'
+```
+
+**Using Azure User-Assigned Managed Identity authentication**
+```yml
+jobs:
+  migrate-database:
+    runs-on: [self-hosted, windows-2019]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Flyway
+        uses: actions/setup-flyway@v1
+        with:
+          version: 5.1.4
+
+      - name: Run Flyway Migrations
+        uses: im-open/run-flyway-command@v1.4.0
+        with:
+          db-server-name: 'localhost'
+          db-server-port: '1433'
+          db-name: 'LocalDb'
+          migration-files-path: './src/Database/Migrations'
+          flyway-command: 'migrate'
+          migration-history-table: 'dbo.MigrationHistory'
+          baseline-version: '0'
+          managed-schemas: 'dbo,MyCustomSchema'
+          enable-out-of-order: 'true'
+          use-azure-managed-identity: 'true'
+          azure-msi-client-id: '${{ secrets.AZ_MSI_CLIENT_ID }}'
+```
+
+**Using Azure System-Assigned Managed Identity authentication**
+```yml
+jobs:
+  migrate-database:
+    runs-on: [self-hosted, windows-2019]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Flyway
+        uses: actions/setup-flyway@v1
+        with:
+          version: 5.1.4
+
+      - name: Run Flyway Migrations
+        uses: im-open/run-flyway-command@v1.4.0
+        with:
+          db-server-name: 'localhost'
+          db-server-port: '1433'
+          db-name: 'LocalDb'
+          migration-files-path: './src/Database/Migrations'
+          flyway-command: 'migrate'
+          migration-history-table: 'dbo.MigrationHistory'
+          baseline-version: '0'
+          managed-schemas: 'dbo,MyCustomSchema'
+          enable-out-of-order: 'true'
+          use-azure-managed-identity: 'true'
+```
 
 ## Contributing
 
