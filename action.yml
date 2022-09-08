@@ -41,17 +41,10 @@ inputs:
     description: A switch defining whether or not to use integrated security. If not provided, a password should be.
     required: false
     default: 'false'
-  use-azure-managed-identity:
-    description: A switch to indicate that an Azure Managed Identity should be used to authenticate with the SQL Server. azure-msi-client-id must be specified if you are using a User-Assigned Managed Identity. If you are using a System-Assigned Managed Identity then azure-msi-client-id should not be specified.
-    required: false
-    default: 'false'
   use-azure-service-principal:
     description: A switch to indicate that an Azure Active Directory Service Principal will be used to authentication with the SQL Server.
     required: false
     default: 'false'
-  azure-msi-client-id:
-    description: The Azure Client Id of the Managed Identity used to login to the database. Must be specified if the Managed Identity is a User-Assigned Managed Identity and the use-azure-managed-identity flag is set. If the Managed Identity is System-Assigned, then this property should not be set.
-    required: false
   username:
     description: The username of the user making the changes, which is put into the MigrationHistory table, and also to login with if not using integrated security. This should be the Service Principal ID if use-azure-service-principal is set to true.
     required: false
@@ -82,9 +75,7 @@ runs:
         -enableOutOfOrder:$${{ inputs.enable-out-of-order }} `
         -validateMigrations:$${{ inputs.validate-migrations }} `
         -useIntegratedSecurity:$${{ inputs.use-integrated-security }} `
-        -useActiveDirectoryMSI:$${{ inputs.use-azure-managed-identity }} `
         -useActiveDirectoryServicePrincipal:$${{ inputs.use-azure-service-principal }} `
-        -msiClientId "${{ inputs.azure-msi-client-id }}" `
         -username "${{ inputs.username }}" `
         -password $securePassword `
         -extraParameters "${{ inputs.extra-parameters }}"
