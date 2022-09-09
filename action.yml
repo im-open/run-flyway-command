@@ -24,28 +24,32 @@ inputs:
     required: true
   baseline-version:
     description: The baseline version to send to the flyway command.
-    required: true
+    required: false
     default: '0'
   managed-schemas:
     description: A comma separated list of schemas that are to be managed by Flyway.MigrationHistory.
     required: true
   enable-out-of-order:
     description: A switch that allows new migrations that are a lower version number than a current migration to be run.
-    required: true
+    required: false
     default: 'false'
   validate-migrations:
     description: A switch determining whether flyway should validate the migration scripts before running them.
-    required: true
+    required: false
     default: 'true'
   use-integrated-security:
     description: A switch defining whether or not to use integrated security. If not provided, a password should be.
-    required: true
+    required: false
+    default: 'false'
+  use-azure-service-principal:
+    description: A switch to indicate that an Azure Active Directory Service Principal will be used to authenticate with the SQL Server.
+    required: false
     default: 'false'
   username:
-    description: The username of the user making the changes, which is put into the MigrationHistory table, and also to login with if not using integrated security.
-    required: true
+    description: The username of the user making the changes, which is put into the MigrationHistory table, and also to login with if not using integrated security. This should be the Service Principal ID if use-azure-service-principal is set to true.
+    required: false
   password:
-    description: The password for the user making changes if not using integrated security.
+    description: The password for the user making changes if not using integrated security. This should be the Service Principal Secret if use-azure-service-principal is set to true.
     required: false
   extra-parameters:
     description: A string containing anything extra that should be added to the flyway command.
@@ -71,6 +75,7 @@ runs:
         -enableOutOfOrder:$${{ inputs.enable-out-of-order }} `
         -validateMigrations:$${{ inputs.validate-migrations }} `
         -useIntegratedSecurity:$${{ inputs.use-integrated-security }} `
+        -useActiveDirectoryServicePrincipal:$${{ inputs.use-azure-service-principal }} `
         -username "${{ inputs.username }}" `
         -password $securePassword `
         -extraParameters "${{ inputs.extra-parameters }}"

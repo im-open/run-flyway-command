@@ -10,6 +10,7 @@ param (
     [string]$managedSchemas,
     [switch]$enableOutOfOrder = $false,
     [switch]$useIntegratedSecurity = $false,
+    [switch]$useActiveDirectoryServicePrincipal = $false,
     [switch]$validateMigrations = $false,
     [string]$username,
     [SecureString]$password
@@ -26,6 +27,9 @@ try {
 
     if ($useIntegratedSecurity) {
         $jdbcUrl += "integratedSecurity=true;"
+    }
+    if ($useActiveDirectoryServicePrincipal) {
+        $jdbcUrl += "authentication=ActiveDirectoryServicePrincipal;"
     }
 
     $outOfOrderValue = $enableOutOfOrder.ToString().ToLower()
