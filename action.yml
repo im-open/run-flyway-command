@@ -42,7 +42,7 @@ inputs:
     required: false
     default: 'false'
   use-azure-service-principal:
-    description: A switch to indicate that an Azure Active Directory Service Principal will be used to authentication with the SQL Server.
+    description: A switch to indicate that an Azure Active Directory Service Principal will be used to authenticate with the SQL Server.
     required: false
     default: 'false'
   username:
