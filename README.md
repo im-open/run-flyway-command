@@ -1,9 +1,9 @@
 # run-flyway-command
 
-A GitHub Action that will run [Flyway](https://flywaydb.org/) against a specified database. Flyway must be installed in order for this Action to work. The [setup-flyway](https://github.com/im-open/setup-flyway) Action can be used for that purpose.  
+A GitHub Action that will run [Flyway](https://flywaydb.org/) against a specified database. Flyway must be installed in order for this Action to work. The [setup-flyway](https://github.com/im-open/setup-flyway) Action can be used for that purpose.
 
 ## Index
-    
+
 - [run-flyway-command](#run-flyway-command)
   - [Index](#index)
   - [Inputs](#inputs)
@@ -12,8 +12,9 @@ A GitHub Action that will run [Flyway](https://flywaydb.org/) against a specifie
     - [Incrementing the Version](#incrementing-the-version)
   - [Code of Conduct](#code-of-conduct)
   - [License](#license)
-  
+
 ## Inputs
+
 | Parameter                     | Is Required | Default | Description                                                                                                                                                                                                                                |
 | ----------------------------- | ----------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `db-server-name`              | true        | N/A     | The database server name.                                                                                                                                                                                                                  |
@@ -34,18 +35,18 @@ A GitHub Action that will run [Flyway](https://flywaydb.org/) against a specifie
 
 ## Examples
 
-
 **Using user/password authentication**
+
 ```yml
 jobs:
   migrate-database:
     runs-on: [self-hosted, windows-2019]
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Flyway
-        uses: actions/setup-flyway@v1
+        uses: actions/setup-flyway@v1.1.0
         with:
           version: 5.1.4
 
@@ -68,16 +69,17 @@ jobs:
 ```
 
 **Using Azure Service Principal authentication**
+
 ```yml
 jobs:
   migrate-database:
     runs-on: [self-hosted, windows-2019]
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Flyway
-        uses: actions/setup-flyway@v1
+        uses: actions/setup-flyway@v1.1.0
         with:
           version: 5.1.4
 
@@ -101,19 +103,20 @@ jobs:
 ## Contributing
 
 When creating new PRs please ensure:
+
 1. For major or minor changes, at least one of the commit messages contains the appropriate `+semver:` keywords listed under [Incrementing the Version](#incrementing-the-version).
-2. The `README.md` example has been updated with the new version.  See [Incrementing the Version](#incrementing-the-version).
+2. The `README.md` example has been updated with the new version. See [Incrementing the Version](#incrementing-the-version).
 3. The action code does not contain sensitive information.
 
 ### Incrementing the Version
 
-This action uses [git-version-lite] to examine commit messages to determine whether to perform a major, minor or patch increment on merge.  The following table provides the fragment that should be included in a commit message to active different increment strategies.
-| Increment Type | Commit Message Fragment                     |
+This action uses [git-version-lite] to examine commit messages to determine whether to perform a major, minor or patch increment on merge. The following table provides the fragment that should be included in a commit message to active different increment strategies.
+| Increment Type | Commit Message Fragment |
 | -------------- | ------------------------------------------- |
-| major          | +semver:breaking                            |
-| major          | +semver:major                               |
-| minor          | +semver:feature                             |
-| minor          | +semver:minor                               |
+| major | +semver:breaking |
+| major | +semver:major |
+| minor | +semver:feature |
+| minor | +semver:minor |
 | patch          | *default increment type, no comment needed* |
 
 ## Code of Conduct
