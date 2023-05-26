@@ -2,6 +2,7 @@ param (
     [string]$dbServer,
     [string]$dbServerPort,
     [string]$dbName,
+    [switch]$trustServerCertificate,
     [string]$pathToMigrationFiles,
     [string]$flywayCommand,
     [string]$extraParameters,
@@ -23,7 +24,7 @@ Write-Information -InformationAction Continue -MessageData "Running $flywayComma
 $flywayLocations = "filesystem:`"$(Resolve-Path $pathToMigrationFiles)`""
 
 try {
-    $jdbcUrl = "jdbc:sqlserver://${dbServer}:$dbServerPort;databaseName=$dbName;"
+    $jdbcUrl = "jdbc:sqlserver://${dbServer}:$dbServerPort;databaseName=$dbName;trustServerCertificate=$trustServerCertificate;"
 
     if ($useIntegratedSecurity) {
         $jdbcUrl += "integratedSecurity=true;"
