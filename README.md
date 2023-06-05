@@ -20,6 +20,7 @@ A GitHub Action that will run [Flyway](https://flywaydb.org/) against a specifie
 | `db-server-name`              | true        | N/A     | The database server name.                                                                                                                                                                                                                  |
 | `db-server-port`              | false       | 1433    | The port the database server listens on.                                                                                                                                                                                                   |
 | `db-name`                     | true        | N/A     | The name of the database to run flyway against.                                                                                                                                                                                            |
+| `trust-server-certificate`    | false       | false   | A boolean that controls whether or not to validate the SQL Server TLS certificate.                                                                                                                                                         |
 | `migration-files-path`        | true        | N/A     | The path to the base directory containing the migration files to have flyway process.                                                                                                                                                      |
 | `flyway-command`              | true        | N/A     | The flyway command to run; e.g `migrate`, `validate`, etc.                                                                                                                                                                                 |
 | `migration-history-table`     | true        | N/A     | The table where the migration history lives. This is most likely dbo.MigrationHistory or Flyway.MigrationHistory.                                                                                                                          |
@@ -52,11 +53,12 @@ jobs:
 
       - name: Run Flyway Migrations
         # You may also reference the major or major.minor version
-        uses: im-open/run-flyway-command@v1.4.1
+        uses: im-open/run-flyway-command@v1.5.0
         with:
           db-server-name: 'localhost'
           db-server-port: '1433'
           db-name: 'LocalDb'
+          trust-server-certificate: 'true'
           migration-files-path: './src/Database/Migrations'
           flyway-command: 'migrate'
           migration-history-table: 'dbo.MigrationHistory'
@@ -86,11 +88,12 @@ jobs:
 
       - name: Run Flyway Migrations
         # You may also reference the major or major.minor version
-        uses: im-open/run-flyway-command@v1.4.1
+        uses: im-open/run-flyway-command@v1.5.0
         with:
           db-server-name: 'localhost'
           db-server-port: '1433'
           db-name: 'LocalDb'
+          trust-server-certificate: 'true'
           migration-files-path: './src/Database/Migrations'
           flyway-command: 'migrate'
           migration-history-table: 'dbo.MigrationHistory'
@@ -121,12 +124,12 @@ There may be some instances where the bot does not have permission to push chang
 The `auto-update-readme` and PR merge workflows will use the strategies below to determine what the next version will be.  If the `auto-update-readme` workflow was not able to automatically update the README.md action-examples with the next version, the README.md should be updated manually as part of the PR using that calculated version.
 
 This action uses [git-version-lite] to examine commit messages to determine whether to perform a major, minor or patch increment on merge. The following table provides the fragment that should be included in a commit message to active different increment strategies.
-| Increment Type | Commit Message Fragment |
+| Increment Type | Commit Message Fragment                     |
 | -------------- | ------------------------------------------- |
-| major | +semver:breaking |
-| major | +semver:major |
-| minor | +semver:feature |
-| minor | +semver:minor |
+| major          | +semver:breaking                            |
+| major          | +semver:major                               |
+| minor          | +semver:feature                             |
+| minor          | +semver:minor                               |
 | patch          | *default increment type, no comment needed* |
 
 ## Code of Conduct

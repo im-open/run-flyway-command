@@ -13,6 +13,10 @@ inputs:
   db-name:
     description: The name of the database to run flyway against.
     required: true
+  trust-server-certificate:
+    description: A boolean that controls whether or not to validate the SQL Server TLS certificate.
+    required: false
+    default: 'false'
   migration-files-path:
     description: The path to the base directory containing the migration files to process with /src/run-flyway.ps1
     required: true
@@ -67,6 +71,7 @@ runs:
         -dbServer "${{ inputs.db-server-name }}" `
         -dbServerPort "${{ inputs.db-server-port }}" `
         -dbName "${{ inputs.db-name }}" `
+        -trustServerCertificate:$${{ inputs.trust-server-certificate }} `
         -pathToMigrationFiles "${{ inputs.migration-files-path }}" `
         -flywayCommand "${{ inputs.flyway-command }}" `
         -migrationHistoryTable "${{ inputs.migration-history-table }}" `
