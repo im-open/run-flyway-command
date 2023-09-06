@@ -54,7 +54,7 @@ jobs:
 
       - name: Run Flyway Migrations
         # You may also reference the major or major.minor version
-        uses: im-open/run-flyway-command@v1.5.0
+        uses: im-open/run-flyway-command@v1.5.1
         with:
           db-server-name: 'localhost'
           db-server-port: '1433'
@@ -89,7 +89,7 @@ jobs:
 
       - name: Run Flyway Migrations
         # You may also reference the major or major.minor version
-        uses: im-open/run-flyway-command@v1.5.0
+        uses: im-open/run-flyway-command@v1.5.1
         with:
           db-server-name: 'localhost'
           db-server-port: '1433'
