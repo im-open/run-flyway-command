@@ -1,6 +1,6 @@
 name: Run Flyway Command
 
-description: Runs the flyway command line tool against the given database
+description: Runs the flyway command line tool against the given database.  Make a source code change.
 
 inputs:
   db-server-name:
@@ -84,3 +84,4 @@ runs:
         -username "${{ inputs.username }}" `
         -password $securePassword `
         -extraParameters "${{ inputs.extra-parameters }}"
+        
