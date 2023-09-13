@@ -49,6 +49,10 @@ inputs:
     description: A switch to indicate that an Azure Active Directory Service Principal will be used to authenticate with the SQL Server.
     required: false
     default: 'false'
+  use-azure-service-principal-federated:
+    description: A switch to indicate that an Azure Active Directory Service Principal will be used to authenticate with the SQL using the federated credentials. You must set the input enable-AzPSSession to true on Azure Login Step.
+    required: false
+    default: 'false'
   username:
     description: The username of the user making the changes, which is put into the MigrationHistory table, and also to login with if not using integrated security. This should be the Service Principal ID if use-azure-service-principal is set to true.
     required: false

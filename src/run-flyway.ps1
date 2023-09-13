@@ -12,6 +12,7 @@ param (
     [switch]$enableOutOfOrder = $false,
     [switch]$useIntegratedSecurity = $false,
     [switch]$useActiveDirectoryServicePrincipal = $false,
+    [switch]$useActiveDirectoryServicePrincipalFederated = $false,
     [switch]$validateMigrations = $false,
     [string]$username,
     [SecureString]$password
@@ -31,6 +32,13 @@ try {
     }
     if ($useActiveDirectoryServicePrincipal) {
         $jdbcUrl += "authentication=ActiveDirectoryServicePrincipal;"
+    }
+
+    if ($useActiveDirectoryServicePrincipalFederated) {
+        # Import-Module -Name Az.Accounts -MinimumVersion 2.2.0
+        # $access_token = (Get-AzAccessToken -ResourceUrl "https://database.windows.net").Token
+        $jdbcUrl += "authentication=ActiveDirectoryMSI;"
+        $jdbcUrl += "msiClientId=$username;"
     }
 
     $outOfOrderValue = $enableOutOfOrder.ToString().ToLower()
