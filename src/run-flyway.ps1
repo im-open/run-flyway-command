@@ -67,6 +67,10 @@ try {
         $printableFlywayParamArray += "-password=`"$password`""
     }
 
+    if ($useActiveDirectoryServicePrincipalFederated) {
+        $flywayParamArray += "-user=`"$userName`""
+    }
+
     $flywayParams = [string]::Join(" ", $flywayParamArray)
     $flywayParams = $flywayParams + " $extraParameters"
     $printableFlywayParams = [string]::Join(" ", $printableFlywayParamArray) + " $extraParameters"
