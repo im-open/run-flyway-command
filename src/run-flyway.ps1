@@ -35,10 +35,9 @@ try {
     }
 
     if ($useActiveDirectoryServicePrincipalFederated) {
-        # Import-Module -Name Az.Accounts -MinimumVersion 2.2.0
-        # $access_token = (Get-AzAccessToken -ResourceUrl "https://database.windows.net").Token
-        $jdbcUrl += "authentication=ActiveDirectoryMSI;"
-        $jdbcUrl += "msiClientId=$username;"
+        Import-Module -Name Az.Accounts -MinimumVersion 2.2.0
+        $access_token = (Get-AzAccessToken -ResourceUrl "https://database.windows.net").Token
+        $jdbcUrl += "authentication=AccessToken;"
     }
 
     $outOfOrderValue = $enableOutOfOrder.ToString().ToLower()
