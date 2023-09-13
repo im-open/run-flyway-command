@@ -85,6 +85,7 @@ runs:
         -validateMigrations:$${{ inputs.validate-migrations }} `
         -useIntegratedSecurity:$${{ inputs.use-integrated-security }} `
         -useActiveDirectoryServicePrincipal:$${{ inputs.use-azure-service-principal }} `
+        -useActiveDirectoryServicePrincipalFederated:$${{ inputs.use-azure-service-principal-federated }} `
         -username "${{ inputs.username }}" `
         -password $securePassword `
         -extraParameters "${{ inputs.extra-parameters }}"
