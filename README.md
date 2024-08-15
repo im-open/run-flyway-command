@@ -42,7 +42,7 @@ A GitHub Action that will run [Flyway](https://flywaydb.org/) against a specifie
 ```yml
 jobs:
   migrate-database:
-    runs-on: [self-hosted, windows-2019]
+    runs-on: im-windows-sql-server
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -77,7 +77,7 @@ jobs:
 ```yml
 jobs:
   migrate-database:
-    runs-on: [self-hosted, windows-2019]
+    runs-on: im-windows-sql-server
     steps:
       - name: Checkout
         uses: actions/checkout@v3
