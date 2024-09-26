@@ -31,6 +31,7 @@ A GitHub Action that will run [Flyway](https://flywaydb.org/) against a specifie
 | `validate-migrations`         | false       | true    | A switch determining whether flyway should validate the migration scripts before running them.                                                                                                                                             |
 | `use-integrated-security`     | false       | false   | A switch defining whether or not to use integrated security. If not provided, a password should be.                                                                                                                                        |
 | `use-azure-service-principal` | false       | false   | A switch to indicate that an Azure Active Directory Service Principal will be used to authenticate with the SQL Server.                                                                                                                    |
+| `use-azure-default-credential` | false       | false   | A switch to indicate that an Azure Active Directory Credential will be used to authenticate with the SQL Server. This credential includes any credential in the Azure Identity Provider. Requires flyway version `10.17.0` or later.                                                                              |
 | `username`                    | false       | N/A     | The username of the user making the changes, which is put into the MigrationHistory table, and also to login with if not using integrated security. This should be the Service Principal ID if use-azure-service-principal is set to true. |
 | `password`                    | false       | N/A     | The password for the user making changes if not using integrated security. This should be the Service Principal Secret if use-azure-service-principal is set to true.                                                                      |
 | `extra-parameters`            | false       | N/A     | A string containing anything extra that should be added to the flyway command.                                                                                                                                                             |
@@ -42,19 +43,19 @@ A GitHub Action that will run [Flyway](https://flywaydb.org/) against a specifie
 ```yml
 jobs:
   migrate-database:
-    runs-on: [self-hosted, windows-2019]
+    runs-on: im-windows-sql-server
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Flyway
-        uses: actions/setup-flyway@v1.1.0
+        uses: actions/setup-flyway@v1.3.1
         with:
-          version: 5.1.4
+          version: 10.18.1
 
       - name: Run Flyway Migrations
         # You may also reference the major or major.minor version
-        uses: im-open/run-flyway-command@v1.5.0
+        uses: im-open/run-flyway-command@v1.5.1
         with:
           db-server-name: 'localhost'
           db-server-port: '1433'
@@ -77,19 +78,19 @@ jobs:
 ```yml
 jobs:
   migrate-database:
-    runs-on: [self-hosted, windows-2019]
+    runs-on: im-windows-sql-server
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Flyway
-        uses: actions/setup-flyway@v1.1.0
+        uses: actions/setup-flyway@v1.3.1
         with:
           version: 5.1.4
 
       - name: Run Flyway Migrations
         # You may also reference the major or major.minor version
-        uses: im-open/run-flyway-command@v1.5.0
+        uses: im-open/run-flyway-command@v1.5.1
         with:
           db-server-name: 'localhost'
           db-server-port: '1433'
@@ -104,6 +105,51 @@ jobs:
           use-azure-service-principal: 'true'
           username: '${{ secrets.AZ_SERVICE_PRINCIPAL_ID }}'
           password: '${{ secrets.AZ_SERVICE_PRINCIPAL_SECRET }}'
+```
+
+**Using Azure Service Principal Federated Credential**
+
+To use this method you must have flyway version `10.17.0` or later installed.
+
+```yml
+jobs:
+  migrate-database:
+    runs-on: im-windows-sql-server
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flyway
+        uses: actions/setup-flyway@v1.3.1
+        with:
+          version: 10.18.1
+          use-redgate-url: true # Must set this to true because maven flyway has broken dependencies for Auzre.Identity
+
+      - name: AZ Login
+        id: login
+        uses: azure/login@v2
+        with:
+          # This is an org-level variable
+          tenant-id: ${{ vars.ARM_TENANT_ID }}
+          # These are env-level variables
+          subscription-id: ${{ vars.ARM_SUBSCRIPTION_ID }}
+          client-id: ${{ vars.ARM_CLIENT_ID }}
+
+      - name: Run Flyway Migrations
+        # You may also reference the major or major.minor version
+        uses: im-open/run-flyway-command@v1.5.1
+        with:
+          db-server-name: 'localhost'
+          db-server-port: '1433'
+          db-name: 'LocalDb'
+          trust-server-certificate: 'true'
+          migration-files-path: './src/Database/Migrations'
+          flyway-command: 'migrate'
+          migration-history-table: 'dbo.MigrationHistory'
+          baseline-version: '0'
+          managed-schemas: 'dbo,MyCustomSchema'
+          enable-out-of-order: 'true'
+          use-azure-default-credential: 'true'
 ```
 
 ## Contributing
