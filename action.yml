@@ -49,6 +49,10 @@ inputs:
     description: A switch to indicate that an Azure Active Directory Service Principal will be used to authenticate with the SQL Server.
     required: false
     default: 'false'
+  use-azure-default-credential: # Requires flyway version 10.17.0 or later
+    description: A switch to indicate that an Azure Active Directory Credential will be used to authenticate with the SQL Server. This credential includes any credential in the Azure Identity Provider
+    required: false
+    default: 'false'
   username:
     description: The username of the user making the changes, which is put into the MigrationHistory table, and also to login with if not using integrated security. This should be the Service Principal ID if use-azure-service-principal is set to true.
     required: false
@@ -81,6 +85,7 @@ runs:
         -validateMigrations:$${{ inputs.validate-migrations }} `
         -useIntegratedSecurity:$${{ inputs.use-integrated-security }} `
         -useActiveDirectoryServicePrincipal:$${{ inputs.use-azure-service-principal }} `
+        -useActiveDirectoryCredential:$${{ inputs.use-azure-default-credential }} `
         -username "${{ inputs.username }}" `
         -password $securePassword `
         -extraParameters "${{ inputs.extra-parameters }}"

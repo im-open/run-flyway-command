@@ -12,6 +12,7 @@ param (
     [switch]$enableOutOfOrder = $false,
     [switch]$useIntegratedSecurity = $false,
     [switch]$useActiveDirectoryServicePrincipal = $false,
+    [switch]$useActiveDirectoryCredential = $false, # Requires flyway version 10.17.0
     [switch]$validateMigrations = $false,
     [string]$username,
     [SecureString]$password
@@ -31,6 +32,9 @@ try {
     }
     if ($useActiveDirectoryServicePrincipal) {
         $jdbcUrl += "authentication=ActiveDirectoryServicePrincipal;"
+    }
+    if($useActiveDirectoryCredential){
+        $jdbcUrl += "authentication=ActiveDirectoryDefault;"
     }
 
     $outOfOrderValue = $enableOutOfOrder.ToString().ToLower()
